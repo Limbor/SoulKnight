@@ -1,0 +1,77 @@
+#include "StartScene.h"
+#include  "GameScene.h"
+#include "SimpleAudioEngine.h"
+
+USING_NS_CC;
+
+//创建场景
+Scene* StartScene::createScene()
+{
+	auto scene = Scene::create();
+	auto layer = StartScene::create();
+
+	scene->addChild(layer);
+	//返回场景
+	return scene;
+}
+
+//设置按钮
+bool StartScene::init()
+{
+    if ( !Scene::init() )
+    {
+        return false;
+    }
+
+	//设置背景
+	auto bg = Sprite::create("homeBg.png");
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	bg->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	addChild(bg);
+
+	//设置“进入游戏”按钮
+	auto StartItem = MenuItemImage::create("button-start1.png",
+		                                   "buttonstart-clicked.png",
+		           CC_CALLBACK_1(StartScene::menuStartCallback, this));
+
+	//设置“进入游戏”按钮位置
+	StartItem->setPosition(Vec2(origin.x + StartItem->getContentSize().width / 2 + 80,
+		origin.y + StartItem->getContentSize().height / 2 + 120));
+	
+	
+	//设置“退出游戏”按钮
+	auto ExitItem = MenuItemImage::create("button-exit1.png",
+		                                  "buttonexit-clicked.png",
+		           CC_CALLBACK_1(StartScene::menuExitCallback, this));
+
+	//设置“退出游戏”按钮位置
+	ExitItem->setPosition(Vec2(origin.x - ExitItem->getContentSize().width / 2 - 80 + visibleSize.width,
+		origin.y + ExitItem->getContentSize().height / 2 + 120));
+	
+
+	auto menu = Menu::create(StartItem, ExitItem, NULL);
+	menu->setPosition(Vec2::ZERO);
+	this->addChild(menu, 1);
+
+    return true;
+}
+
+void StartScene::menuStartCallback(Ref* pSender)
+{
+	//Director::getInstance()->end();
+	//跳入下一个场景
+	auto scene = GameScene::createScene();
+	Director::getInstance()->replaceScene(scene);
+}
+
+void StartScene::menuExitCallback(Ref* pSender)
+{
+    Director::getInstance()->end();
+
+	//下面是啥不知道，也不敢删掉
+    #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    exit(0);
+#endif
+     
+}
