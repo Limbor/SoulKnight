@@ -1,6 +1,7 @@
 #include "StartScene.h"
-#include  "GameScene.h"
-#include "SimpleAudioEngine.h"
+#include  "SelectMode.h"
+#include  "SimpleAudioEngine.h"
+#include  <string>
 
 USING_NS_CC;
 
@@ -18,21 +19,30 @@ Scene* StartScene::createScene()
 //设置按钮
 bool StartScene::init()
 {
-    if ( !Scene::init() )
+    if ( !Layer::init() )
     {
         return false;
     }
 
-	//设置背景
-	auto bg = Sprite::create("homeBg.png");
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-    Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	bg->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	//设置背景图片
+	auto bg = Sprite::create("bg.png");
+	bg->setPosition(visibleSize.width / 2, visibleSize.height / 2+200);
 	addChild(bg);
 
+	//设置标签
+	string str = "adgfdjhavcjhgah";
+	auto myLabel = Label::createWithTTF(str, "fonts/arial.ttf", 65);
+ 	              myLabel->setPosition(Vec2(origin.x + visibleSize.width/2,
+	                                  	origin.y + visibleSize.height-myLabel->getContentSize().height) );
+				  myLabel->setColor(Color3B(0, 0, 0));
+	              this->addChild(myLabel, 1);
+
 	//设置“进入游戏”按钮
-	auto StartItem = MenuItemImage::create("button-start1.png",
-		                                   "buttonstart-clicked.png",
+	auto StartItem = MenuItemImage::create("button-enter.png",
+		                                   "buttonenter-click.png",
 		           CC_CALLBACK_1(StartScene::menuStartCallback, this));
 
 	//设置“进入游戏”按钮位置
@@ -41,8 +51,8 @@ bool StartScene::init()
 	
 	
 	//设置“退出游戏”按钮
-	auto ExitItem = MenuItemImage::create("button-exit1.png",
-		                                  "buttonexit-clicked.png",
+	auto ExitItem = MenuItemImage::create("button-exit.png",
+		                                  "buttonexit-click.png",
 		           CC_CALLBACK_1(StartScene::menuExitCallback, this));
 
 	//设置“退出游戏”按钮位置
@@ -61,7 +71,7 @@ void StartScene::menuStartCallback(Ref* pSender)
 {
 	//Director::getInstance()->end();
 	//跳入下一个场景
-	auto scene = GameScene::createScene();
+	auto scene = SelectMode::createScene();
 	Director::getInstance()->replaceScene(scene);
 }
 
