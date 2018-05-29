@@ -8,7 +8,7 @@ USING_NS_CC;
 
 //创建场景
 Scene* Room::createScene()
-{
+{   
 	auto scene = Scene::create();
 	auto layer = Room::create();
 
@@ -32,6 +32,14 @@ bool Room::init()
 	auto bg = Sprite::create("bg.png");
 	bg->setPosition(visibleSize.width / 2, visibleSize.height / 2 + 200);
 	addChild(bg);
+
+	/*	//设置标签
+	string str = "";
+	auto myLabel = Label::createWithTTF(str, "fonts/arial.ttf", 65);
+	myLabel->setPosition(Vec2(origin.x + visibleSize.width / 2,
+	origin.y + visibleSize.height - myLabel->getContentSize().height));
+	myLabel->setColor(Color3B(0, 0, 0));
+	this->addChild(myLabel, 1);             */
 
 	//设置“创建房间”按钮
 	auto FormItem = MenuItemImage::create("button-form.png",
@@ -64,7 +72,7 @@ void Room::menuFormRoom(Ref* pSender)
 {
 	//跳入选择英雄场景
 	room = "form";
-	auto scene = SelectHero::createScene();
+	auto scene = SelectHero::createScene(room);
 	Director::getInstance()->replaceScene(scene);
 }
 
@@ -72,7 +80,7 @@ void Room::menuIntoRoom(Ref* pSender)
 {
 	//跳入选择英雄场景
 	room = "into";
-	auto scene = SelectHero::createScene();
+	auto scene = SelectHero::createScene(room);
 	Director::getInstance()->replaceScene(scene);
 
 	//下面是啥不知道，也不敢删掉
