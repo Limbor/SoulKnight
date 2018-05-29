@@ -6,7 +6,9 @@ USING_NS_CC;
 
 Scene* GameScene::createScene()
 {
-	auto scene = Scene::create();
+	auto scene = Scene::createWithPhysics();
+	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+	scene->getPhysicsWorld()->setGravity(Vec2(0, 0));
 	auto layer = GameScene::create();
 	scene->addChild(layer);
 	return scene;
@@ -69,7 +71,19 @@ bool GameScene::init()
 	dispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
 	dispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
 
+	for (int i = 0; i < CCRANDOM_0_1() * 5 + 5; i++)
+	{
+		addMonster(CCRANDOM_0_1() * 2000, CCRANDOM_0_1() * 1500);
+	}
+
     return true;
+}
+
+void GameScene::addMonster(int x, int y)
+{
+	monster = Monster::create();
+	monster->setPosition(x, y);
+	addChild(monster);
 }
 
 void GameScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event *event)

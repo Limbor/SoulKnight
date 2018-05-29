@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "Hero.h"
 #include "Bullet.h"
+#include "Monster.h"
 
 class GameScene : public cocos2d::Scene
 {
@@ -27,6 +28,8 @@ public:
 	void bloodChange(int x);
 	void shieldChange(int x);
 	void blueChange(int x);
+	void addMonster(int x, int y);
+	Monster * monster;
 	CREATE_FUNC(GameScene);
 };
 
