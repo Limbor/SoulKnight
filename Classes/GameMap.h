@@ -1,15 +1,16 @@
-#ifndef __HELLOWORLD_SCENE_H__
-#define __HELLOWORLD_SCENE_H__
+#ifndef __GAMEMAP_H__
+#define __GAMEMAP_H__
 
 #include "cocos2d.h"
+#include "GameScene.h"
 
 class GameMap : public cocos2d::Layer
 {
 public:
     static cocos2d::Layer* createLayer();
     virtual bool init();
-	void addBarrier();
+	void addBarrier(GameScene* scene);
     CREATE_FUNC(GameMap);
 };
 
-#endif // __HELLOWORLD_SCENE_H__
+#endif // __GAMEMAP_H__

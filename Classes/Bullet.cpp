@@ -1,12 +1,33 @@
 #include "Bullet.h"
 
 
-bool Bullet::init()
+Bullet * Bullet::createbullet(Hero * h)
 {
+	Bullet* enemy = new Bullet();
+	if (enemy && enemy->init()) {
+		enemy->bullet(h);
+		return enemy;
+	}
+	CC_SAFE_DELETE(enemy);
+	return NULL;
+}
+
+void Bullet::bullet(Hero * hero)
+{
+	this->hero = hero;
+	sort = 1;
 	speed = 10;
 	size = Director::getInstance()->getVisibleSize();
 	Sprite::initWithFile("yellow.png");
 	scheduleUpdate();
+}
+
+bool Bullet::init()
+{
+	if (!Sprite::init())
+	{
+		return false;
+	}
 	return true;
 }
 
@@ -19,14 +40,10 @@ void Bullet::update(float dt)
 	else if (getPosition().y > hero->getPosition().y + hero->getContentSize().width / 2 || getPosition().y < hero->getPosition().y - hero->getContentSize().width / 2) {
 		setVisible(true);
 	}
-	if (getPosition().x > size.width || getPosition().y > size.height || getPosition().x < 0 || getPosition().y < 0) {
+	if (getPosition().x - getContentSize().width / 2 < 56 || getPosition().x + getContentSize().width / 2 > 1990 ||
+		getPosition().y - getContentSize().height / 2 < 95 || getPosition().y + getContentSize().height / 2 > 1020) {
 		setVisible(false);
 	}
-}
-
-void Bullet::addHero(Hero * hero)
-{
-	this->hero = hero;
 }
 
 void Bullet::setDirection(float x, float y)

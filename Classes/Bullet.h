@@ -12,12 +12,14 @@ private:
 	int speed;
 	float x;
 	float y;
-public:
 	Hero * hero;
+public:
+	int sort;
+	static Bullet* createbullet(Hero* hero);
+	void bullet(Hero* hero);
 	bool init();
 	CREATE_FUNC(Bullet);
 	virtual void update(float dt);
-	void addHero(Hero* hero);
 	void setDirection(float x, float y);
 };
 
