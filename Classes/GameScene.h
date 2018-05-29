@@ -27,6 +27,7 @@ public:
 	void bloodChange(int x);
 	void shieldChange(int x);
 	void blueChange(int x);
+	void addBarrier();
 	CREATE_FUNC(GameScene);
 };
 

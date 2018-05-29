@@ -19,6 +19,18 @@ bool Hero::init()
 
 void Hero::update(float dt)
 {
+	if (getPosition().x - getContentSize().width / 2 < 56 && xMove == -1) {
+		xMove = 0;
+	}
+	else if (getPosition().x + getContentSize().width / 2 > 1990 && xMove == 1) {
+		xMove = 0;
+	}
+	else if (getPosition().y - getContentSize().height / 2 < 84 && yMove == -1) {
+		yMove = 0;
+	}
+	else if (getPosition().y + getContentSize().height / 2 > 1070 && yMove == 1) {
+		yMove = 0;
+	}
 	setPosition(getPositionX() + xMove * speed, getPositionY() + yMove * speed);
 }
 

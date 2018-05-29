@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "SimpleAudioEngine.h"
+#include "GameMap.h"
 
 USING_NS_CC;
 
@@ -26,15 +27,18 @@ bool GameScene::init()
 	firstTouch = true;
     size = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	auto* background = cocos2d::LayerColor::create(cocos2d::Color4B(255, 255, 255, 255));
-	addChild(background);
-
-	stateBoard = Sprite::create("stateboard.png");
-	stateBoard->setPosition(stateBoard->getContentSize().width/2, size.height-stateBoard->getContentSize().height/2);
-	addChild(stateBoard);
+	
+	auto* gamemap = GameMap::createLayer();
+	addChild(gamemap);
 
 	hero = Hero::create();
 	addChild(hero);
+
+	addBarrier();
+
+	stateBoard = Sprite::create("stateboard.png");
+	stateBoard->setPosition(stateBoard->getContentSize().width / 2, size.height - stateBoard->getContentSize().height / 2);
+	addChild(stateBoard);
 
 	red = Sprite::create("red.png");
 	red->setPosition(40 + red->getContentSize().width / 2, size.height - 11 - red->getContentSize().height / 2);
@@ -169,4 +173,80 @@ void GameScene::blueChange(int x)
 	blue->setScaleX(scale);
 	blue->setPosition(40 + blue->getContentSize().width * scale / 2, size.height - 59 - blue->getContentSize().height / 2);
 	blueNumber->setString(String::createWithFormat("%i", hero->blue)->getCString());
+}
+
+void GameScene::addBarrier() {
+	Sprite* wall[34];
+	for (int i = 0;i < 34;i++) {
+		wall[i] = Sprite::create("27.wall1.png");
+		wall[i]->setPosition(33 + 60 * i, 35 + 30);
+		addChild(wall[i]);
+	}
+	int treemap[14][32] = {
+		{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+	};
+	Sprite* tree[14][32];
+
+	for (int i = 0;i < 14;i++) {
+		for (int j = 0;j < 32;j++) {
+			switch (treemap[13 - i][j]) {
+			case 0:break;
+			case 1:tree[13 - i][j] = Sprite::create("29.tree1.png");
+				tree[13 - i][j]->setPosition(93 + 60 * j, 200 + 60 * i);
+				addChild(tree[13 - i][j]);break;
+			}
+		}
+	}
+	int boxmap[14][32] = {
+		{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,4,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,5,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,1,3,1,1,3,3,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,5,0,0 },
+	{ 0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,4,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0 },
+	{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+	};
+	Sprite* box[14][32];
+	for (int i = 0;i < 14;i++) {
+		for (int j = 0;j < 32;j++) {
+			switch (boxmap[13 - i][j]) {
+			case 0:break;
+			case 1:box[13 - i][j] = Sprite::create("28.bigstone1.png");
+				box[13 - i][j]->setPosition(93 + 60 * j, 185 + 60 * i);
+				addChild(box[13 - i][j]);break;
+			case 2:box[13 - i][j] = Sprite::create("30.fire1.png");
+				box[13 - i][j]->setPosition(93 + 60 * j, 185 + 60 * i);
+				addChild(box[13 - i][j]);break;
+			case 3:box[13 - i][j] = Sprite::create("31.bigstone2.png");
+				box[13 - i][j]->setPosition(93 + 60 * j, 185 + 60 * i);
+				addChild(box[13 - i][j]);break;
+			case 4:box[13 - i][j] = Sprite::create("32.box1.png");
+				box[13 - i][j]->setPosition(93 + 60 * j, 185 + 60 * i);
+				addChild(box[13 - i][j]);break;
+			case 5:box[13 - i][j] = Sprite::create("33.box2.png");
+				box[13 - i][j]->setPosition(93 + 60 * j, 185 + 60 * i);
+				addChild(box[13 - i][j]);break;
+			}
+		}
+	}
 }

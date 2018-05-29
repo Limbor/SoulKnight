@@ -8,6 +8,7 @@ class GameMap : public cocos2d::Layer
 public:
     static cocos2d::Layer* createLayer();
     virtual bool init();
+	void addBarrier();
     CREATE_FUNC(GameMap);
 };
 
