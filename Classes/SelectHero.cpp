@@ -6,18 +6,18 @@
 
 USING_NS_CC;
 
-//��������
+//创建场景
 Scene* SelectHero::createScene()
 {
 	auto scene = Scene::create();
 	auto layer = SelectHero::create();
 
 	scene->addChild(layer);
-	//���س���
+	//返回场景
 	return scene;
 }
 
-//���ð�ť
+//设置按钮
 bool SelectHero::init()
 {
 	if (!Scene::init())
@@ -28,27 +28,27 @@ bool SelectHero::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	//���ñ���ͼƬ
+	//设置背景图片
 	auto bg = Sprite::create();
 	bg->setPosition(visibleSize.width / 2, visibleSize.height / 2 + 200);
 	addChild(bg);             
 
-	//���á�ѡ��һ��Ӣ�ۡ���ť
+	//设置“选择一号英雄”按钮
 	auto HeroOneItem = MenuItemImage::create("button-heroone.png",
 		                                "buttonheroone-click.png",
 		            CC_CALLBACK_1(SelectHero::menuHeroOne, this));
 
-	//���á�ѡ��һ��Ӣ�ۡ���ťλ��
+	//设置“选择一号英雄”按钮位置
 	HeroOneItem->setPosition(Vec2(origin.x - HeroOneItem->getContentSize().width / 2 - 80 + visibleSize.width,
 		                        origin.y + HeroOneItem->getContentSize().height / 2 + 820));
 
 
-	//���á�ѡ�����Ӣ�ۡ���ť
+	//设置“选择二号英雄”按钮
 	auto HeroTwoItem = MenuItemImage::create("button-herotwo.png",
 		                                "buttonherotwo-click.png",
 	             	CC_CALLBACK_1(SelectHero::menuHeroTwo, this));
 
-	//���á�ѡ�����Ӣ�ۡ���ťλ��
+	//设置“选择二号英雄”按钮位置
 	HeroTwoItem->setPosition(Vec2(origin.x - HeroTwoItem->getContentSize().width / 2 - 80 +visibleSize.width,
 		origin.y + HeroTwoItem->getContentSize().height / 2 + 120));
 
@@ -64,19 +64,20 @@ bool SelectHero::init()
 void SelectHero::menuHeroOne(Ref* pSender)
 {
 
-	//������Ϸ����
+	//进入游戏界面
 	hero = "one";
-	Director::getInstance()->end();
+	auto scene = GameScene::createScene();
+	Director::getInstance()->replaceScene(scene);
 }
 
 
 void SelectHero::menuHeroTwo(Ref* pSender)
 {
-	//������Ϸ����
+	//进入游戏界面
     hero = "two";
 	Director::getInstance()->end();
 
-	//������ɶ��֪����Ҳ����ɾ��
+	//下面是啥不知道，也不敢删掉
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	exit(0);
 #endif
