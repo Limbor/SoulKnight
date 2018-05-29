@@ -3,6 +3,7 @@
 #define __SELECT_HERO_H__
 
 #include "cocos2d.h"
+#include "GameScene.h"
 using namespace std;
 
 class SelectHero : public cocos2d::Scene
