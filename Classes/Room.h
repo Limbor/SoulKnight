@@ -21,6 +21,5 @@ public:
 	CREATE_FUNC(Room);
 };
 
-
 #endif // __Room_H__
 

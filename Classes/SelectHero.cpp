@@ -1,28 +1,23 @@
 #include  "SelectHero.h"
 #include  "SelectMode.h"
 #include   "Room.h"
-#include   "GameScene.h"
 #include  "SimpleAudioEngine.h"
 #include  <string>
 
 USING_NS_CC;
 
-//´´½¨Ò»¸ö¶ÔÏóµ÷ÓÃ·Ç¾²Ì¬±äÁ¿À´´«µİ±äÁ¿
-htemp test;
-
-//´´½¨³¡¾°
-Scene* SelectHero::createScene(string str)
-{   
-	test.st = str;
+//åˆ›å»ºåœºæ™¯
+Scene* SelectHero::createScene()
+{
 	auto scene = Scene::create();
 	auto layer = SelectHero::create();
 
 	scene->addChild(layer);
-	//·µ»Ø³¡¾°
+	//è¿”å›åœºæ™¯
 	return scene;
 }
 
-//ÉèÖÃ°´Å¥
+//è®¾ç½®æŒ‰é’®
 bool SelectHero::init()
 {
 	if (!Scene::init())
@@ -33,49 +28,29 @@ bool SelectHero::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	//ÉèÖÃ±³¾°Í¼Æ¬
+	//è®¾ç½®èƒŒæ™¯å›¾ç‰‡
 	auto bg = Sprite::create();
 	bg->setPosition(visibleSize.width / 2, visibleSize.height / 2 + 200);
 	addChild(bg);             
 
-	//ÉèÖÃ¡°Ñ¡ÔñÒ»ºÅÓ¢ĞÛ¡±°´Å¥
-		auto HeroOneItem = MenuItemImage::create("button-heroone.png",
-		                                	"buttonheroone-click.png",
-		            	CC_CALLBACK_1(SelectHero::menuHeroOne, this));
+	//è®¾ç½®â€œé€‰æ‹©ä¸€å·è‹±é›„â€æŒ‰é’®
+	auto HeroOneItem = MenuItemImage::create("button-heroone.png",
+		                                "buttonheroone-click.png",
+		            CC_CALLBACK_1(SelectHero::menuHeroOne, this));
 
-		//ÉèÖÃ¡°Ñ¡ÔñÒ»ºÅÓ¢ĞÛ¡±°´Å¥Î»ÖÃ
-		HeroOneItem->setPosition(Vec2(origin.x - HeroOneItem->getContentSize().width / 2 - 80 + visibleSize.width,
-			origin.y + HeroOneItem->getContentSize().height / 2 + 500));
-	
-	    //ÉèÖÃ±êÇ©ÏÔÊ¾²»Í¬Ä£Ê½ÏÂµÄĞÅÏ¢
-		auto *chnString = Dictionary::createWithContentsOfFile("message.xml");
-		const char *str;
+	//è®¾ç½®â€œé€‰æ‹©ä¸€å·è‹±é›„â€æŒ‰é’®ä½ç½®
+	HeroOneItem->setPosition(Vec2(origin.x - HeroOneItem->getContentSize().width / 2 - 80 + visibleSize.width,
+		                        origin.y + HeroOneItem->getContentSize().height / 2 + 820));
 
-		if (test.st == "single") {
-			str = ((String*)chnString->objectForKey("string1"))->getCString();
-		}
-		else  if (test.st == "form") {
-		   str = ((String*)chnString->objectForKey("string2"))->getCString();
-		}
-		else {
-			str = ((String*)chnString->objectForKey("string3"))->getCString();
-		}
-		auto *Labell = Label::create(str, "Arial", 36);
-		Labell->setPosition(origin.x + visibleSize.width / 2,
-			origin.y + visibleSize.height - Labell->getContentSize().height);
-		Labell->setColor(Color3B(255, 255, 255));
-		addChild(Labell);
-		
-	    
 
-	//ÉèÖÃ¡°Ñ¡Ôñ¶şºÅÓ¢ĞÛ¡±°´Å¥
+	//è®¾ç½®â€œé€‰æ‹©äºŒå·è‹±é›„â€æŒ‰é’®
 	auto HeroTwoItem = MenuItemImage::create("button-herotwo.png",
 		                                "buttonherotwo-click.png",
 	             	CC_CALLBACK_1(SelectHero::menuHeroTwo, this));
 
-	//ÉèÖÃ¡°Ñ¡Ôñ¶şºÅÓ¢ĞÛ¡±°´Å¥Î»ÖÃ
+	//è®¾ç½®â€œé€‰æ‹©äºŒå·è‹±é›„â€æŒ‰é’®ä½ç½®
 	HeroTwoItem->setPosition(Vec2(origin.x - HeroTwoItem->getContentSize().width / 2 - 80 +visibleSize.width,
-		origin.y + HeroTwoItem->getContentSize().height / 2 + 100));
+		origin.y + HeroTwoItem->getContentSize().height / 2 + 120));
 
 
 	auto menu = Menu::create(HeroOneItem, HeroTwoItem, NULL);
@@ -89,20 +64,20 @@ bool SelectHero::init()
 void SelectHero::menuHeroOne(Ref* pSender)
 {
 
-	//½øÈëÓÎÏ·½çÃæ
+	//è¿›å…¥æ¸¸æˆç•Œé¢
 	hero = "one";
-	//auto scene = GameScene::createScene();
-	Director::getInstance()->end();
+	auto scene = GameScene::createScene();
+	Director::getInstance()->replaceScene(scene);
 }
 
 
 void SelectHero::menuHeroTwo(Ref* pSender)
 {
-	//½øÈëÓÎÏ·½çÃæ
+	//è¿›å…¥æ¸¸æˆç•Œé¢
     hero = "two";
 	Director::getInstance()->end();
 
-	//ÏÂÃæÊÇÉ¶²»ÖªµÀ£¬Ò²²»¸ÒÉ¾µô
+	//ä¸‹é¢æ˜¯å•¥ä¸çŸ¥é“ï¼Œä¹Ÿä¸æ•¢åˆ æ‰
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	exit(0);
 #endif

@@ -29,17 +29,9 @@ bool SelectMode::init()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	//设置背景图片
-	auto bg = Sprite::create("bg2.png");
+	auto bg = Sprite::create();
 	bg->setPosition(visibleSize.width / 2, visibleSize.height / 2 + 200);
 	addChild(bg);
-
-	/*	//设置标签
-	string str = "";
-	auto myLabel = Label::createWithTTF(str, "fonts/arial.ttf", 65);
-	myLabel->setPosition(Vec2(origin.x + visibleSize.width / 2,
-	origin.y + visibleSize.height - myLabel->getContentSize().height));
-	myLabel->setColor(Color3B(0, 0, 0));
-	this->addChild(myLabel, 1);             */
 
 	//设置“单人模式”按钮
 	auto SingleItem = MenuItemImage::create("button-single.png",
@@ -72,7 +64,7 @@ void SelectMode::menuSingleMode(Ref* pSender)
 {    
 	//进入选择英雄界面
 	mode = "single";
-	auto scene = SelectHero::createScene(mode);
+	auto scene = SelectHero::createScene();
 	Director::getInstance()->replaceScene(scene);
 }
 
