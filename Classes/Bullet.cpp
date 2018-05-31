@@ -45,6 +45,16 @@ void Bullet::bulletM(Monster * monster)
 	scheduleUpdate();
 }
 
+void Bullet::bulletM(Monster * monster)
+{
+	this->monster = monster;
+	sort = 1;
+	speed = 10;
+	size = Director::getInstance()->getVisibleSize();
+	Sprite::initWithFile("purple.png");
+	scheduleUpdate();
+}
+
 bool Bullet::init()
 {
 	if (!Sprite::init())

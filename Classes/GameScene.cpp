@@ -36,7 +36,12 @@ bool GameScene::init()
 	hero = Hero::create();
 	addChild(hero);
 
+<<<<<<< HEAD
 	for (int i = 0; i < CCRANDOM_0_1() * 5 + 5; i++) {
+=======
+	for (int i = 0; i < CCRANDOM_0_1() * 5 + 5; i++)
+	{
+>>>>>>> 24db339eac34a6b40a767ea7421b986d56c54a79
 		addMonster(CCRANDOM_0_1() * 2000, CCRANDOM_0_1() * 1500);
 	}
 
@@ -76,7 +81,11 @@ bool GameScene::init()
 	//contactListener->onContactBegin = CC_CALLBACK_1(GameScene::onContactBegin, this);
 	dispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
 	dispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
+<<<<<<< HEAD
 	//dispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
+=======
+
+>>>>>>> 24db339eac34a6b40a767ea7421b986d56c54a79
 
     return true;
 }

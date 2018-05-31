@@ -8,8 +8,11 @@ class Monster:public Sprite
 public:
 	virtual bool init();
 	void update(float dt);
+	void myupdate(float dt);
 	int bloodM;
-	int distance;
+	float distance;
+	Hero * hero;
+	void addHero(Hero* hero);
 	CREATE_FUNC(Monster);
 };
 
