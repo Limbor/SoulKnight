@@ -36,6 +36,11 @@ bool GameScene::init()
 	hero = Hero::create();
 	addChild(hero);
 
+	for (int i = 0; i < CCRANDOM_0_1() * 5 + 5; i++)
+	{
+		addMonster(CCRANDOM_0_1() * 2000, CCRANDOM_0_1() * 1500);
+	}
+
 	gamemap->addBarrier(this);
 
 	stateBoard = Sprite::create("stateboard.png");
@@ -71,10 +76,6 @@ bool GameScene::init()
 	dispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
 	dispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
 
-	for (int i = 0; i < CCRANDOM_0_1() * 5 + 5; i++)
-	{
-		addMonster(CCRANDOM_0_1() * 2000, CCRANDOM_0_1() * 1500);
-	}
 
     return true;
 }
@@ -84,6 +85,7 @@ void GameScene::addMonster(int x, int y)
 	monster = Monster::create();
 	monster->setPosition(x, y);
 	addChild(monster);
+	monster->addHero(hero);
 }
 
 void GameScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event *event)

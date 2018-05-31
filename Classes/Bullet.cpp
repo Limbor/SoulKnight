@@ -12,6 +12,17 @@ Bullet * Bullet::createbullet(Hero * h)
 	return NULL;
 }
 
+Bullet * Bullet::createbulletM(Monster * monster)
+{
+	Bullet* enemy = new Bullet();
+	if (enemy && enemy->init()) {
+		enemy->bulletM(monster);
+		return enemy;
+	}
+	CC_SAFE_DELETE(enemy);
+	return NULL;
+}
+
 void Bullet::bullet(Hero * hero)
 {
 	this->hero = hero;
@@ -19,6 +30,16 @@ void Bullet::bullet(Hero * hero)
 	speed = 10;
 	size = Director::getInstance()->getVisibleSize();
 	Sprite::initWithFile("yellow.png");
+	scheduleUpdate();
+}
+
+void Bullet::bulletM(Monster * monster)
+{
+	this->monster = monster;
+	sort = 1;
+	speed = 10;
+	size = Director::getInstance()->getVisibleSize();
+	Sprite::initWithFile("purple.png");
 	scheduleUpdate();
 }
 
