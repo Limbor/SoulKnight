@@ -3,7 +3,7 @@
 #define __SELECT_MODE_H__
 
 #include "cocos2d.h"
-#include <string>
+
 using namespace std;
 
 class SelectMode : public cocos2d::Scene
