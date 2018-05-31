@@ -25,6 +25,7 @@ public:
 	virtual void onKeyReleased(EventKeyboard::KeyCode keycode, Event *event);
 	virtual bool onTouchBegan(Touch *touch, Event *event);
 	virtual void onTouchEnded(Touch *touch, Event *event);
+	//virtual bool onContactBegin(PhysicsContact* contact);
 	void bloodChange(int x);
 	void shieldChange(int x);
 	void blueChange(int x);

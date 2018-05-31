@@ -36,6 +36,10 @@ bool GameScene::init()
 	hero = Hero::create();
 	addChild(hero);
 
+	for (int i = 0; i < CCRANDOM_0_1() * 5 + 5; i++) {
+		addMonster(CCRANDOM_0_1() * 2000, CCRANDOM_0_1() * 1500);
+	}
+
 	gamemap->addBarrier(this);
 
 	stateBoard = Sprite::create("stateboard.png");
@@ -62,19 +66,17 @@ bool GameScene::init()
 	addChild(blueNumber);
 
 	auto* dispatcher = Director::getInstance()->getEventDispatcher();
-	auto* keyListener = EventListenerKeyboard::create();
-	auto* touchListener = EventListenerTouchOneByOne::create();
+	auto keyListener = EventListenerKeyboard::create();
+	auto touchListener = EventListenerTouchOneByOne::create();
+	//auto contactListener = EventListenerPhysicsContact::create();
 	keyListener->onKeyPressed = CC_CALLBACK_2(GameScene::onKeyPressed, this);
 	keyListener->onKeyReleased = CC_CALLBACK_2(GameScene::onKeyReleased, this);
 	touchListener->onTouchBegan = CC_CALLBACK_2(GameScene::onTouchBegan, this);
 	touchListener->onTouchEnded = CC_CALLBACK_2(GameScene::onTouchEnded, this);
+	//contactListener->onContactBegin = CC_CALLBACK_1(GameScene::onContactBegin, this);
 	dispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
 	dispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
-
-	for (int i = 0; i < CCRANDOM_0_1() * 5 + 5; i++)
-	{
-		addMonster(CCRANDOM_0_1() * 2000, CCRANDOM_0_1() * 1500);
-	}
+	//dispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 
     return true;
 }
@@ -84,6 +86,7 @@ void GameScene::addMonster(int x, int y)
 	monster = Monster::create();
 	monster->setPosition(x, y);
 	addChild(monster);
+	monster->addHero(hero);
 }
 
 void GameScene::onKeyPressed(EventKeyboard::KeyCode keycode, Event *event)

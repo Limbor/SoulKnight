@@ -12,13 +12,36 @@ Bullet * Bullet::createbullet(Hero * h)
 	return NULL;
 }
 
+Bullet * Bullet::createbulletM(Monster * monster)
+{
+	Bullet* enemy = new Bullet();
+	if (enemy && enemy->init()) {
+		enemy->bulletM(monster);
+		return enemy;
+	}
+	CC_SAFE_DELETE(enemy);
+	return NULL;
+}
+
 void Bullet::bullet(Hero * hero)
 {
 	this->hero = hero;
 	sort = 1;
-	speed = 10;
+	speed = 15;
 	size = Director::getInstance()->getVisibleSize();
 	Sprite::initWithFile("yellow.png");
+	setPhysicsBody(PhysicsBody::createCircle(getContentSize().width / 2 - 5, cocos2d::PhysicsMaterial(0, 0, 0)));
+	scheduleUpdate();
+}
+
+void Bullet::bulletM(Monster * monster)
+{
+	this->monster = monster;
+	sort = 1;
+	speed = 15;
+	size = Director::getInstance()->getVisibleSize();
+	Sprite::initWithFile("purple.png");
+	setPhysicsBody(PhysicsBody::createCircle(getContentSize().width / 2 - 5, cocos2d::PhysicsMaterial(0, 0, 0)));
 	scheduleUpdate();
 }
 
