@@ -11,21 +11,43 @@ private:
 	int speed;
 	int xMove;
 	int yMove;
+	int heroNumber;
 public:
+	int BLOOD;
+	int SHIELD;
+	int BLUE;
+
+	bool hemophagia = false;
+	bool musth = false;
+
+	Sprite * gun;
+	int barrier[18][34];
 	int blood;
 	int shield;
 	int blue;
+	float FiringRate = 0.2f;
 	bool heroRight;
+	bool gunRight;
+
+	static Hero* createhero(int heroNumber);
 	virtual bool init();
+	void enemyInit(int heroNumber);
 	CREATE_FUNC(Hero);
+
 	virtual void update(float dt);
 	void frameChange();
 	void setSpeedx(int x);
 	void setSpeedy(int y);
+	int getSpeedx();
+	int getSpeedy();
 	void heroRightStatic();
 	void heroRightMove();
 	void heroLeftStatic();
 	void heroLeftMove();
+	void getBarreir(int a[][34], int length);
+	void gunDirection();
+	void showTimeBegan();
+	void showTimeEnded();
 };
 
 #endif // __HERO__H__

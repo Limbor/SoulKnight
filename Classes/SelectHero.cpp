@@ -2,22 +2,23 @@
 #include  "SelectMode.h"
 #include   "Room.h"
 #include  "SimpleAudioEngine.h"
+#include "GameScene.h"
 #include  <string>
 
 USING_NS_CC;
 
-//åˆ›å»ºåœºæ™¯
+//´´½¨³¡¾°
 Scene* SelectHero::createScene()
 {
 	auto scene = Scene::create();
 	auto layer = SelectHero::create();
 
 	scene->addChild(layer);
-	//è¿”å›åœºæ™¯
+	//·µ»Ø³¡¾°
 	return scene;
 }
 
-//è®¾ç½®æŒ‰é’®
+//ÉèÖÃ°´Å¥
 bool SelectHero::init()
 {
 	if (!Scene::init())
@@ -28,27 +29,27 @@ bool SelectHero::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	//è®¾ç½®èƒŒæ™¯å›¾ç‰‡
+	//ÉèÖÃ±³¾°Í¼Æ¬
 	auto bg = Sprite::create();
 	bg->setPosition(visibleSize.width / 2, visibleSize.height / 2 + 200);
 	addChild(bg);             
 
-	//è®¾ç½®â€œé€‰æ‹©ä¸€å·è‹±é›„â€æŒ‰é’®
+	//ÉèÖÃ¡°Ñ¡ÔñÒ»ºÅÓ¢ĞÛ¡±°´Å¥
 	auto HeroOneItem = MenuItemImage::create("button-heroone.png",
 		                                "buttonheroone-click.png",
 		            CC_CALLBACK_1(SelectHero::menuHeroOne, this));
 
-	//è®¾ç½®â€œé€‰æ‹©ä¸€å·è‹±é›„â€æŒ‰é’®ä½ç½®
+	//ÉèÖÃ¡°Ñ¡ÔñÒ»ºÅÓ¢ĞÛ¡±°´Å¥Î»ÖÃ
 	HeroOneItem->setPosition(Vec2(origin.x - HeroOneItem->getContentSize().width / 2 - 80 + visibleSize.width,
 		                        origin.y + HeroOneItem->getContentSize().height / 2 + 820));
 
 
-	//è®¾ç½®â€œé€‰æ‹©äºŒå·è‹±é›„â€æŒ‰é’®
+	//ÉèÖÃ¡°Ñ¡Ôñ¶şºÅÓ¢ĞÛ¡±°´Å¥
 	auto HeroTwoItem = MenuItemImage::create("button-herotwo.png",
 		                                "buttonherotwo-click.png",
 	             	CC_CALLBACK_1(SelectHero::menuHeroTwo, this));
 
-	//è®¾ç½®â€œé€‰æ‹©äºŒå·è‹±é›„â€æŒ‰é’®ä½ç½®
+	//ÉèÖÃ¡°Ñ¡Ôñ¶şºÅÓ¢ĞÛ¡±°´Å¥Î»ÖÃ
 	HeroTwoItem->setPosition(Vec2(origin.x - HeroTwoItem->getContentSize().width / 2 - 80 +visibleSize.width,
 		origin.y + HeroTwoItem->getContentSize().height / 2 + 120));
 
@@ -64,7 +65,7 @@ bool SelectHero::init()
 void SelectHero::menuHeroOne(Ref* pSender)
 {
 
-	//è¿›å…¥æ¸¸æˆç•Œé¢
+	//½øÈëÓÎÏ·½çÃæ
 	hero = "one";
 	auto scene = GameScene::createScene();
 	Director::getInstance()->replaceScene(scene);
@@ -73,11 +74,12 @@ void SelectHero::menuHeroOne(Ref* pSender)
 
 void SelectHero::menuHeroTwo(Ref* pSender)
 {
-	//è¿›å…¥æ¸¸æˆç•Œé¢
+	//½øÈëÓÎÏ·½çÃæ
     hero = "two";
-	Director::getInstance()->end();
+	auto scene = GameScene::createScene();
+	Director::getInstance()->replaceScene(scene);
 
-	//ä¸‹é¢æ˜¯å•¥ä¸çŸ¥é“ï¼Œä¹Ÿä¸æ•¢åˆ æ‰
+	//ÏÂÃæÊÇÉ¶²»ÖªµÀ£¬Ò²²»¸ÒÉ¾µô
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	exit(0);
 #endif

@@ -7,6 +7,9 @@
 class GameMap : public cocos2d::Layer
 {
 public:
+	float mapNumber;
+	int barrierMap[18][34];
+
     static cocos2d::Layer* createLayer();
     virtual bool init();
 	void addBarrier(GameScene* scene);

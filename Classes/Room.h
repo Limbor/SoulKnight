@@ -1,6 +1,6 @@
-#pragma once
-#ifndef __Room_H__
-#define __Room_H__
+
+#ifndef __ROOM__H__
+#define __ROOM__H__
 
 #include "cocos2d.h"
 using namespace std;
