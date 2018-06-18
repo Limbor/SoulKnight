@@ -181,7 +181,6 @@ void Hero::gunDirection()
 
 void Hero::showTimeEnded()
 {
-	speed /= 2;
 	FiringRate *= 2;
 	musth = false;
 	hemophagia = false;
@@ -189,7 +188,6 @@ void Hero::showTimeEnded()
 
 void Hero::showTimeBegan()
 {
-	speed *= 2;
 	FiringRate /= 2;
 	musth = true;
 	hemophagia = true;

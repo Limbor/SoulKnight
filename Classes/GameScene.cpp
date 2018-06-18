@@ -31,10 +31,11 @@ bool GameScene::init()
     }
 	recover = false;
 	firstTouch = true;
+	bossNumber = 1;
     size = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	//boss延时出现在地图中央5秒
-	//scheduleOnce(schedule_selector(GameScene::bossAppear), 5.0f);
+	scheduleOnce(schedule_selector(GameScene::bossAppear), 5.0f);
 	//导入地图
 	GameMap* gamemap = GameMap::create();
 	addChild(gamemap);
@@ -46,7 +47,7 @@ bool GameScene::init()
 	hero->getBarreir(gamemap->barrierMap, 18);
 
 	//生成怪物，个数随即在4~6个
-	monster_number = CCRANDOM_0_1() * 2 + 4;
+	/*monster_number = CCRANDOM_0_1() * 2 + 4;
 	for (int i = 0; i <monster_number; i++)
 	{
 		monster_array[i] = Monster::create();
@@ -55,9 +56,8 @@ bool GameScene::init()
 		monster_array[i]->setTag(i + 4);
 		monster_array[i]->addHero(hero);
 		monster_array[i]->getBarreir(gamemap->barrierMap, 18);
-		monster_array[i]->setZOrder(hero->getZOrder());
 	}   
-	schedule(schedule_selector(GameScene::MonsterBullet), 0.5f);
+	schedule(schedule_selector(GameScene::MonsterBullet), 0.5f);*/
 
 	gamemap->addBarrier(this);
 
@@ -221,7 +221,13 @@ bool GameScene::onContactBegin(PhysicsContact &contact)
 		for (int i = 0; i < monster_number; i++) {
 			if ((NodeA->getTag() == i + 4 && NodeB->getTag() == 2) || (NodeB->getTag() == i + 4 && NodeA->getTag() == 2))
 			{
-				if (hero->hemophagia && hero->blood < hero->BLOOD) bloodChange(1);
+				if (hero->hemophagia) {
+					srand(time(0));
+					if (rand() % 2 == 1 && hero->blood < hero->BLOOD) {
+						bloodChange(1);
+					}
+					if(hero->blue < hero->BLUE) blueChange(1);
+				}
 				if (NodeA->getTag() == 2)
 				{
 					NodeA->removeFromParentAndCleanup(true);
@@ -319,56 +325,134 @@ void GameScene::MonsterDie(float dt)
 //添加boss
 void GameScene::addBoss(float x, float y)
 {
-	boss = Boss::create();
+	boss = Boss::createboss(bossNumber);
 	boss->setPosition(x, y);
 	addChild(boss);
 	boss->addHero(hero);
-	schedule(schedule_selector(GameScene::BossBullet), 0.8f);
+	schedule(schedule_selector(GameScene::BossBullet), 0.6f);
+	schedule(schedule_selector(GameScene::BossFlash), 5.0f);
 	boss->setTag(1);
 	boss->getBarreir(hero->barrier, 18);
+	boss->setLocalZOrder(hero->getLocalZOrder());
 }
-//Boss延时出现
+//boss延时出现
 void GameScene::bossAppear(float dt)
 {
 	addBoss(size.width / 2, size.height / 2);
-	boss->setZOrder(hero->getZOrder());
 	redB = Sprite::create("red.png");
-	redB->setPosition(size.width / 2 , size.height- redB->getContentSize().height / 2);
+	redB->setPosition(size.width / 2, size.height - redB->getContentSize().height / 2);
 	addChild(redB);
 	bloodNumberB = Label::create(String::createWithFormat("%i", boss->blood)->getCString(), "Arial", 18);
 	bloodNumberB->setPosition(redB->getPosition().x, redB->getPosition().y);
 	addChild(bloodNumberB);
 }
-//Boss发射子弹
+//boss发射子弹
 void GameScene::BossBullet(float dt) {
-	for (int i = 0; i < 12; i++) {
+	if (bossNumber == 1) {
+		for (int i = 0; i < 12; i++) {
+			auto* bullet = Bullet::createbullet(boss);
+			bullet->setPosition(boss->getPosition().x, boss->getPosition().y);
+			switch (i)
+			{
+			case 0:  bullet->setDirection(1, 0);   break;
+			case 1:  bullet->setDirection(2, 1);   break;
+			case 2:  bullet->setDirection(1, 2);   break;
+			case 3:  bullet->setDirection(0, 1);   break;
+			case 4:  bullet->setDirection(-1, 2);   break;
+			case 5:  bullet->setDirection(-2, 1);   break;
+			case 6:  bullet->setDirection(-1, 0);   break;
+			case 7:  bullet->setDirection(-2, -1);   break;
+			case 8:  bullet->setDirection(-1, -2);   break;
+			case 9:  bullet->setDirection(0, -1);   break;
+			case 10:  bullet->setDirection(1, -2);   break;
+			case 11:  bullet->setDirection(2, -1);   break;
+			}
+			addChild(bullet);
+			bullet->getBarreir(hero->barrier, 18);
+			bullet->setVisible(false);
+			if (bullet->getPosition().x > boss->getPosition().x + boss->getContentSize().width / 2 ||
+				bullet->getPosition().x < boss->getPosition().x - boss->getContentSize().width / 2) {
+				bullet->setVisible(true);
+			}
+			else if (bullet->getPosition().y > boss->getPosition().y + boss->getContentSize().width / 2 ||
+				bullet->getPosition().y < boss->getPosition().y - boss->getContentSize().width / 2) {
+				bullet->setVisible(true);
+			}
+		}
+	}
+	else  if (bossNumber == 2 || bossNumber == 3) {
 		auto* bullet = Bullet::createbullet(boss);
 		bullet->setPosition(boss->getPosition().x, boss->getPosition().y);
-		switch (i)
-		{
-		case 0:  bullet->setDirection(1, 0);   break;
-		case 1:  bullet->setDirection(2, 1);   break;
-		case 2:  bullet->setDirection(1, 2);   break;
-		case 3:  bullet->setDirection(0, 1);   break;
-		case 4:  bullet->setDirection(-1, 2);   break;
-		case 5:  bullet->setDirection(-2, 1);   break;
-		case 6:  bullet->setDirection(-1, 0);   break;
-		case 7:  bullet->setDirection(-2, -1);   break;
-		case 8:  bullet->setDirection(-1, -2);   break;
-		case 9:  bullet->setDirection(0, -1);   break;
-		case 10:  bullet->setDirection(1, -2);   break;
-		case 11:  bullet->setDirection(2, -1);   break;
-		}
+		bullet->setDirection(hero->getPosition().x - boss->getPosition().x, hero->getPosition().y - boss->getPosition().y);
 		addChild(bullet);
+		bullet->setTag(4);
 		bullet->getBarreir(hero->barrier, 18);
 		bullet->setVisible(false);
 		if (bullet->getPosition().x > boss->getPosition().x + boss->getContentSize().width / 2 ||
 			bullet->getPosition().x < boss->getPosition().x - boss->getContentSize().width / 2) {
 			bullet->setVisible(true);
 		}
-		else if (bullet->getPosition().y > boss->getPosition().y + boss->getContentSize().width / 2 || 
+		else if (bullet->getPosition().y > boss->getPosition().y + boss->getContentSize().width / 2 ||
 			bullet->getPosition().y < boss->getPosition().y - boss->getContentSize().width / 2) {
 			bullet->setVisible(true);
+		}
+	}
+}
+
+void GameScene::BossFlash(float dt)
+{
+	if (bossNumber == 3) {
+		boss->setPosition(hero->getPosition().x + hero->getContentSize().width / 2, hero->getPosition().y + hero->getContentSize().height / 2);
+		for (int i = 0; i < 4; i++) {
+			auto* bullet = Bullet::createbullet(boss);
+			bullet->setPosition(hero->getPosition().x, hero->getPosition().y);
+			bullet->setDirection(-1, -1);
+			addChild(bullet);
+			bullet->setTag(4);
+			bullet->getBarreir(hero->barrier, 18);
+			bullet->setVisible(false);
+			if (bullet->getPosition().x > boss->getPosition().x + boss->getContentSize().width / 2 ||
+				bullet->getPosition().x < boss->getPosition().x - boss->getContentSize().width / 2) {
+				bullet->setVisible(true);
+			}
+			else if (bullet->getPosition().y > boss->getPosition().y + boss->getContentSize().width / 2 ||
+				bullet->getPosition().y < boss->getPosition().y - boss->getContentSize().width / 2) {
+				bullet->setVisible(true);
+			}
+		}
+	}
+	else  if (bossNumber == 2) {
+		for (int i = 0; i < 4; i++) {
+			auto* bullet = Bullet::createbullet(boss);
+			switch (i)
+			{
+			case 0:  bullet->setPosition(hero->getPosition().x + hero->getContentSize().width * 2, hero->getPosition().y + hero->getContentSize().height * 2);
+				bullet->setDirection(-1, -1);
+				break;
+			case 1:  bullet->setPosition(hero->getPosition().x - hero->getContentSize().width * 2, hero->getPosition().y - hero->getContentSize().height * 2);
+				bullet->setDirection(1, 1);
+				break;
+			case 2:  bullet->setPosition(hero->getPosition().x - hero->getContentSize().width * 2, hero->getPosition().y + hero->getContentSize().height * 2);
+				bullet->setDirection(1, -1);
+				break;
+			case 3:  bullet->setPosition(hero->getPosition().x + hero->getContentSize().width * 2, hero->getPosition().y - hero->getContentSize().height * 2);
+				bullet->setDirection(-1, 1);
+				break;
+			default:
+				break;
+			}
+			addChild(bullet);
+			bullet->setTag(4);
+			bullet->getBarreir(hero->barrier, 18);
+			bullet->setVisible(false);
+			if (bullet->getPosition().x > boss->getPosition().x + boss->getContentSize().width / 2 ||
+				bullet->getPosition().x < boss->getPosition().x - boss->getContentSize().width / 2) {
+				bullet->setVisible(true);
+			}
+			else if (bullet->getPosition().y > boss->getPosition().y + boss->getContentSize().width / 2 ||
+				bullet->getPosition().y < boss->getPosition().y - boss->getContentSize().width / 2) {
+				bullet->setVisible(true);
+			}
 		}
 	}
 }

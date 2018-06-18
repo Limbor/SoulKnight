@@ -11,6 +11,7 @@ class GameScene : public cocos2d::Scene
 {
 private:
 	int monster_number;
+	int bossNumber;
 	float xEnd;
 	float yEnd;
 	bool skillCD = false;
@@ -45,6 +46,7 @@ public:
 	void blueChange(int x);
 
 	void BossBullet(float dt);
+	void BossFlash(float dt);
 	void shieldRecover(float dt);
 	void MonsterBullet(float dt);
 	void MonsterDie(float dt);
