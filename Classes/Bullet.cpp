@@ -1,6 +1,5 @@
 #include "Bullet.h"
 
-
 Bullet * Bullet::createbullet(Hero * hero)
 {
 	Bullet* enemy = new Bullet();
@@ -37,7 +36,7 @@ Bullet * Bullet::createbullet(Boss * boss)
 void Bullet::bullet(Hero * hero)
 {
 	this->hero = hero;
-	speed = 15;
+	speed = 18;
 	setTag(2);
 	size = Director::getInstance()->getVisibleSize();
 	Sprite::initWithFile("yellow.png");
@@ -47,7 +46,7 @@ void Bullet::bullet(Hero * hero)
 void Bullet::bullet(Monster * monster)
 {
 	this->monster = monster;
-	speed = 8;
+	speed = 10;
 	setTag(3);
 	size = Director::getInstance()->getVisibleSize();
 	Sprite::initWithFile("purple.png");
@@ -57,7 +56,7 @@ void Bullet::bullet(Monster * monster)
 void Bullet::bullet(Boss * boss)
 {
 	this->boss = boss;
-	speed = 8;
+	speed = 10;
 	setTag(3);
 	size = Director::getInstance()->getVisibleSize();
 	Sprite::initWithFile("purple.png");

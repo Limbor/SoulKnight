@@ -27,8 +27,8 @@ void Hero::enemyInit(int heroNumber)
 	this->heroNumber = heroNumber;
 	Sprite::initWithFile(String::createWithFormat("r1 %d.png", heroNumber)->getCString());
 	if (heroNumber == 1) {
-		BLOOD = blood = 6;
-		SHIELD = shield = 5;
+		BLOOD = blood = 7;
+		SHIELD = shield = 6;
 		BLUE = blue = 200;
 	}
 	else if (heroNumber == 2) {
@@ -85,6 +85,15 @@ void Hero::update(float dt)
 					}
 				}
 			}
+			if (barrier[17 - i][j] == 2) {
+				if (getPosition().x + xMove * speed + w >(33 + 60 * j - 10) && getPosition().x + xMove * speed - w < (33 + 60 * j + 10)) {
+					if (getPosition().y + yMove * speed - h >(35 + 60 * i - 90) && getPosition().y + yMove * speed - h < (35 + 60 * i - 10)) {
+						scheduleOnce(schedule_selector(Hero::myupdate), 0.0f);
+
+					}
+				}
+			}
+
 		}
 	}
 	setPosition(getPositionX() + xMove * speed, getPositionY() + yMove * speed);
@@ -181,16 +190,30 @@ void Hero::gunDirection()
 
 void Hero::showTimeEnded()
 {
-	FiringRate *= 2;
-	musth = false;
-	hemophagia = false;
+	if (heroNumber == 1) {
+		FiringRate *= 2;
+		hemophagia = false;
+	}
+	else if (heroNumber == 2) {
+		magicNumber = 0;
+		magic->removeFromParentAndCleanup(true);
+	}
 }
 
 void Hero::showTimeBegan()
 {
-	FiringRate /= 2;
-	musth = true;
-	hemophagia = true;
+	if (heroNumber == 1) {
+		FiringRate /= 2;
+		hemophagia = true;
+	}
+	else if (heroNumber == 2) {
+		srand(time(0));
+		magicNumber = rand() % 3 + 1;
+		magic = Sprite::create(String::createWithFormat("magic %d.png", magicNumber)->getCString());
+		magic->setPosition(getContentSize().width / 2, getContentSize().height / 2);
+		magic->setLocalZOrder(-1);
+		addChild(magic);
+	}
 }
 
 void Hero::setSpeedx(int x)
@@ -209,5 +232,19 @@ int Hero::getSpeedy()
 {
 	return yMove;
 }
+void Hero::myupdate(float dt) {
+	setspeed();
+	scheduleOnce(schedule_selector(Hero::myupdate2), 1.0f);
+}
+void Hero::myupdate2(float dt) {
+	resetspeed();
+}
+void Hero::setspeed() {
+	this->speed = 12;
+}
+void Hero::resetspeed() {
+	this->speed = 8;
+}
+
 
 

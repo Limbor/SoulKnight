@@ -17,14 +17,18 @@ public:
 	int SHIELD;
 	int BLUE;
 
+	bool fire = false;
 	bool hemophagia = false;
-	bool musth = false;
 
 	Sprite * gun;
+	Sprite * magic;
 	int barrier[18][34];
 	int blood;
 	int shield;
 	int blue;
+	int magicNumber = 0;
+	int damage = 1;
+	int blueReduce = 1;
 	float FiringRate = 0.2f;
 	bool heroRight;
 	bool gunRight;
@@ -48,6 +52,11 @@ public:
 	void gunDirection();
 	void showTimeBegan();
 	void showTimeEnded();
+	void myupdate(float dt);
+	void myupdate2(float dt);
+	void setspeed();
+	void resetspeed();
+
 };
 
 #endif // __HERO__H__
