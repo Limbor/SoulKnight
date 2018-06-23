@@ -7,8 +7,13 @@
 class GameMap : public cocos2d::Layer
 {
 public:
+	float mapNumber;
+	int barrierMap[18][34];
+
     static cocos2d::Layer* createLayer();
     virtual bool init();
+	static GameMap * createmap(int Number);
+	void enemyInit(int Number);
 	void addBarrier(GameScene* scene);
     CREATE_FUNC(GameMap);
 };

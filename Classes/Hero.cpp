@@ -1,24 +1,67 @@
 #include "Hero.h"
 
+Hero * Hero::createhero(int heroNumber)
+{
+	Hero* enemy = new Hero();
+	if (enemy && enemy->init())
+	{
+		enemy->autorelease();
+		enemy->enemyInit(heroNumber);
+		return enemy;
+	}
+	CC_SAFE_DELETE(enemy);
+	return NULL;
+}
+
 bool Hero::init()
 {
-	Sprite::initWithFile("r1.png");
+	if (!Sprite::init())
+	{
+		return false;
+	}
+	return true;
+}
+
+void Hero::enemyInit(int heroNumber)
+{
+	this->heroNumber = heroNumber;
+	Sprite::initWithFile(String::createWithFormat("r1 %d.png", heroNumber)->getCString());
+	if (heroNumber == 1) {
+		BLOOD = blood = 6;
+		SHIELD = shield = 5;
+		BLUE = blue = 200;
+	}
+	else if (heroNumber == 2) {
+		BLOOD = blood = 10;
+		SHIELD = shield = 3;
+		BLUE = blue = 240;
+	}
+	gun = Sprite::create("gun r.png");
+	gun->setPosition(getPosition().x + 60, getPosition().y + 25);
+	addChild(gun);
 	size = Director::getInstance()->getVisibleSize();
 	heroRight = true;
-	speed = 5;
+	gunRight = true;
+	speed = 8;
 	xMove = 0;
 	yMove = 0;
-	blood = 6;
-	shield = 5;
-	blue = 200;
 	setPosition(size.width / 2, size.height / 2);
+	setPhysicsBody(PhysicsBody::createBox(Size(getContentSize().width - 30, getContentSize().height)));
+	getPhysicsBody()->setContactTestBitmask(0xFFFFFFFF);
 	heroRightStatic();
 	scheduleUpdate();
-	return true;
+	setTag(0);
 }
 
 void Hero::update(float dt)
 {
+	if (gunRight != heroRight) {
+		gunRight = heroRight;
+		gunDirection();
+		gun->setRotation(-gun->getRotation());
+	}
+	float w = getContentSize().width / 2;
+	float h = getContentSize().height / 2;
 	if (getPosition().x - getContentSize().width / 2 < 56 && xMove == -1) {
 		xMove = 0;
 	}
@@ -31,6 +74,29 @@ void Hero::update(float dt)
 	else if (getPosition().y + getContentSize().height / 2 > 1070 && yMove == 1) {
 		yMove = 0;
 	}
+	int i, j;
+	for (i = 0;i < 18;i++) {
+		for (j = 0;j < 34;j++) {
+			if (barrier[17 - i][j] == 1) {
+				if (getPosition().x + xMove * speed + w > (33 + 60 * j - 10) && getPosition().x + xMove * speed - w < (33 + 60 * j + 10)) {
+					if (getPosition().y + yMove * speed - h > (35 + 60 * i - 90 ) && getPosition().y + yMove * speed - h < (35 + 60 * i - 10 )) {
+						yMove = 0;
+						xMove = 0;
+					}
+				}
+			}
+			if (barrier[17 - i][j] == 2) {
+				if (getPosition().x + xMove * speed + w >(33 + 60 * j - 10) && getPosition().x + xMove * speed - w < (33 + 60 * j + 10)) {
+					if (getPosition().y + yMove * speed - h >(35 + 60 * i - 90) && getPosition().y + yMove * speed - h < (35 + 60 * i - 10)) {
+						scheduleOnce(schedule_selector(Hero::myupdate), 0.0f);
+
+					}
+				}
+			}
+
+
+		}
+	}
 	setPosition(getPositionX() + xMove * speed, getPositionY() + yMove * speed);
 }
 
@@ -38,13 +104,13 @@ void Hero::frameChange()
 {
 	if (heroRight) {
 		Texture2D* heroL;
-		Sprite* lHero = CCSprite::create("l1.png");
+		Sprite* lHero = Sprite::create(String::createWithFormat("l1 %d.png", heroNumber)->getCString());
 		heroL = lHero->getTexture();
 		setTexture(heroL);
 	}
 	else if(!heroRight) {
 		Texture2D* heroR;
-		Sprite* rHero = CCSprite::create("r1.png");
+		Sprite* rHero = Sprite::create(String::createWithFormat("r1 %d.png", heroNumber)->getCString());
 		heroR= rHero->getTexture();
 		setTexture(heroR);
 	}
@@ -54,9 +120,9 @@ void Hero::heroRightStatic()
 {
 	Vector<SpriteFrame*> action;
 	action.reserve(3);
-	action.pushBack(SpriteFrame::create("r1.png", Rect(0, 0, 99, 99)));
-	action.pushBack(SpriteFrame::create("r2.png", Rect(0, 0, 99, 99)));
-	action.pushBack(SpriteFrame::create("r3.png", Rect(0, 0, 99, 99)));
+	action.pushBack(SpriteFrame::create(String::createWithFormat("r1 %d.png", heroNumber)->getCString(), Rect(0, 0, 99, 99)));
+	action.pushBack(SpriteFrame::create(String::createWithFormat("r2 %d.png", heroNumber)->getCString(), Rect(0, 0, 99, 99)));
+	action.pushBack(SpriteFrame::create(String::createWithFormat("r3 %d.png", heroNumber)->getCString(), Rect(0, 0, 99, 99)));
 	Animation* animation = Animation::createWithSpriteFrames(action, 0.2f);
 	Animate* animate = Animate::create(animation);
 	runAction(RepeatForever::create(animate));
@@ -65,9 +131,9 @@ void Hero::heroRightMove()
 {
 	Vector<SpriteFrame*> action;
 	action.reserve(3);
-	action.pushBack(SpriteFrame::create("r1.png", Rect(0, 0, 99, 99)));
-	action.pushBack(SpriteFrame::create("r4.png", Rect(0, 0, 99, 99)));
-	action.pushBack(SpriteFrame::create("r3.png", Rect(0, 0, 99, 99)));
+	action.pushBack(SpriteFrame::create(String::createWithFormat("r1 %d.png", heroNumber)->getCString(), Rect(0, 0, 99, 99)));
+	action.pushBack(SpriteFrame::create(String::createWithFormat("r4 %d.png", heroNumber)->getCString(), Rect(0, 0, 99, 99)));
+	action.pushBack(SpriteFrame::create(String::createWithFormat("r3 %d.png", heroNumber)->getCString(), Rect(0, 0, 99, 99)));
 	Animation* animation = Animation::createWithSpriteFrames(action, 0.2f);
 	Animate* animate = Animate::create(animation);
 	runAction(RepeatForever::create(animate));
@@ -76,9 +142,9 @@ void Hero::heroLeftStatic()
 {
 	Vector<SpriteFrame*> action;
 	action.reserve(3);
-	action.pushBack(SpriteFrame::create("l1.png", Rect(0, 0, 99, 99)));
-	action.pushBack(SpriteFrame::create("l2.png", Rect(0, 0, 99, 99)));
-	action.pushBack(SpriteFrame::create("l3.png", Rect(0, 0, 99, 99)));
+	action.pushBack(SpriteFrame::create(String::createWithFormat("l1 %d.png", heroNumber)->getCString(), Rect(0, 0, 99, 99)));
+	action.pushBack(SpriteFrame::create(String::createWithFormat("l2 %d.png", heroNumber)->getCString(), Rect(0, 0, 99, 99)));
+	action.pushBack(SpriteFrame::create(String::createWithFormat("l3 %d.png", heroNumber)->getCString(), Rect(0, 0, 99, 99)));
 	Animation* animation = Animation::createWithSpriteFrames(action, 0.2f);
 	Animate* animate = Animate::create(animation);
 	runAction(RepeatForever::create(animate));
@@ -87,12 +153,70 @@ void Hero::heroLeftMove()
 {
 	Vector<SpriteFrame*> action;
 	action.reserve(3);
-	action.pushBack(SpriteFrame::create("l1.png", Rect(0, 0, 99, 99)));
-	action.pushBack(SpriteFrame::create("l4.png", Rect(0, 0, 99, 99)));
-	action.pushBack(SpriteFrame::create("l3.png", Rect(0, 0, 99, 99)));
+	action.pushBack(SpriteFrame::create(String::createWithFormat("l1 %d.png", heroNumber)->getCString(), Rect(0, 0, 99, 99)));
+	action.pushBack(SpriteFrame::create(String::createWithFormat("l4 %d.png", heroNumber)->getCString(), Rect(0, 0, 99, 99)));
+	action.pushBack(SpriteFrame::create(String::createWithFormat("l3 %d.png", heroNumber)->getCString(), Rect(0, 0, 99, 99)));
 	Animation* animation = Animation::createWithSpriteFrames(action, 0.2f);
 	Animate* animate = Animate::create(animation);
 	runAction(RepeatForever::create(animate));
+}
+
+void Hero::getBarreir(int a[][34], int length)
+{
+	int i, j;
+	for (i = 0;i < 18;i++) {
+		for (j = 0;j < 34;j++) {
+			barrier[i][j] = a[i][j];
+		}
+	}
+}
+
+void Hero::gunDirection()
+{
+	if (gunRight) {
+		Texture2D* gunR;
+		Sprite* rGun = Sprite::create("gun r.png");
+		gunR = rGun->getTexture();
+		gun->setTexture(gunR);
+		gun->setPosition(gun->getPosition().x + 25, gun->getPosition().y);
+	}
+	else {
+		Texture2D* gunL;
+		Sprite* lGun = Sprite::create("gun l.png");
+		gunL = lGun->getTexture();
+		gun->setTexture(gunL);
+		gun->setPosition(gun->getPosition().x - 25, gun->getPosition().y);
+	}
+}
+
+void Hero::showTimeEnded()
+{
+	if (heroNumber == 1) {
+		FiringRate *= 2;
+		musth = false;
+		hemophagia = false;
+	}
+	else if (heroNumber == 2) {
+		magicNumber = 0;
+		magic->removeFromParentAndCleanup(true);
+	}
+}
+
+void Hero::showTimeBegan()
+{
+	if (heroNumber == 1) {
+		FiringRate /= 2;
+		musth = true;
+		hemophagia = true;
+	}
+	else if (heroNumber == 2) {
+		srand(time(0));
+		magicNumber = rand() % 3 + 1;
+		magic = Sprite::create(String::createWithFormat("magic %d.png", magicNumber)->getCString());
+		magic->setPosition(getContentSize().width / 2, getContentSize().height / 2);
+		magic->setLocalZOrder(-1);
+		addChild(magic);
+	}
 }
 
 void Hero::setSpeedx(int x)
@@ -102,6 +226,28 @@ void Hero::setSpeedx(int x)
 void Hero::setSpeedy(int y)
 {
 	yMove = y;
+}
+int Hero::getSpeedx()
+{
+	return xMove;
+}
+int Hero::getSpeedy()
+{
+	return yMove;
+}
+
+void Hero::myupdate(float dt) {
+	setspeed();
+	scheduleOnce(schedule_selector(Hero::myupdate2), 1.0f);
+}
+void Hero::myupdate2(float dt) {
+	resetspeed();
+}
+void Hero::setspeed() {
+	this->speed = 12;
+}
+void Hero::resetspeed() {
+	this->speed = 8;
 }
 
 
