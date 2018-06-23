@@ -85,6 +85,7 @@ void Hero::update(float dt)
 					}
 				}
 			}
+<<<<<<< HEAD
 			if (barrier[17 - i][j] == 2) {
 				if (getPosition().x + xMove * speed + w >(33 + 60 * j - 10) && getPosition().x + xMove * speed - w < (33 + 60 * j + 10)) {
 					if (getPosition().y + yMove * speed - h >(35 + 60 * i - 90) && getPosition().y + yMove * speed - h < (35 + 60 * i - 10)) {
@@ -95,6 +96,8 @@ void Hero::update(float dt)
 			}
 
 
+=======
+>>>>>>> 12e29afed09e1b4aa9ca294b61c26c9194c6cd6d
 		}
 	}
 	setPosition(getPositionX() + xMove * speed, getPositionY() + yMove * speed);
@@ -191,6 +194,7 @@ void Hero::gunDirection()
 
 void Hero::showTimeEnded()
 {
+<<<<<<< HEAD
 	if (heroNumber == 1) {
 		FiringRate *= 2;
 		musth = false;
@@ -200,10 +204,16 @@ void Hero::showTimeEnded()
 		magicNumber = 0;
 		magic->removeFromParentAndCleanup(true);
 	}
+=======
+	FiringRate *= 2;
+	musth = false;
+	hemophagia = false;
+>>>>>>> 12e29afed09e1b4aa9ca294b61c26c9194c6cd6d
 }
 
 void Hero::showTimeBegan()
 {
+<<<<<<< HEAD
 	if (heroNumber == 1) {
 		FiringRate /= 2;
 		musth = true;
@@ -217,6 +227,11 @@ void Hero::showTimeBegan()
 		magic->setLocalZOrder(-1);
 		addChild(magic);
 	}
+=======
+	FiringRate /= 2;
+	musth = true;
+	hemophagia = true;
+>>>>>>> 12e29afed09e1b4aa9ca294b61c26c9194c6cd6d
 }
 
 void Hero::setSpeedx(int x)
@@ -235,6 +250,7 @@ int Hero::getSpeedy()
 {
 	return yMove;
 }
+<<<<<<< HEAD
 
 void Hero::myupdate(float dt) {
 	setspeed();
@@ -249,5 +265,7 @@ void Hero::setspeed() {
 void Hero::resetspeed() {
 	this->speed = 8;
 }
+=======
+>>>>>>> 12e29afed09e1b4aa9ca294b61c26c9194c6cd6d
 
 
