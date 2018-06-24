@@ -1,25 +1,28 @@
-#ifndef __BOSS__H__
-#define __BOSS__H__
-
+#pragma once
 #include "cocos2d.h"
 #include "Hero.h"
 
 USING_NS_CC;
+
 class Boss :public Sprite
 {
 private:
 	Size size;
 	int speed;
 public:
+	int bossNumber;
 	int barrier[18][34];
 	int blood;
+	int BLOOD;
 	double xMove;
 	double yMove;
 	double BeforeDistance;
 	double AfterDistance;
 	virtual bool init();
-	void Boss::bossRightMove();
-	void Boss::bossLeftMove();
+	static Boss * createboss(int bossNumber);
+	void enemyInit(int bossNumber);
+	void bossRightMove();
+	void bossLeftMove();
 	virtual void update(float dt);
 	void getBarreir(int a[][34], int length);
 	void myupdate(float dt);
@@ -29,4 +32,3 @@ public:
 };
 
 
-#endif // __BOSS__H__
