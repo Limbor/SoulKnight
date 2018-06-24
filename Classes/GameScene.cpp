@@ -11,7 +11,7 @@ USING_NS_CC;
 Scene* GameScene::createScene(int sceneNumber, int heroNumber, int mapNumber, int blood, int shield, int blue ,int blueReduce, int damage)
 {
 	auto scene = Scene::createWithPhysics();
-	//scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 	scene->getPhysicsWorld()->setGravity(Vec2(0, 0));
 	auto layer = GameScene::createscene(sceneNumber, heroNumber, mapNumber, blood, shield, blue, blueReduce, damage);
 	scene->addChild(layer);
@@ -59,8 +59,6 @@ void GameScene::enemyInit(int sceneNumber, int heroNumber, int map, int blood, i
 	if (sceneNumber % 2 == 1) mapNumber = 2 * mapNumber - 1;
 	else mapNumber = map;
 	bossNumber = mapNumber;
-	//boss延时出现在地图中央5秒
-	if (sceneNumber % 2 == 0) scheduleOnce(schedule_selector(GameScene::bossAppear), 5.0f);
 	//导入地图
 	GameMap* gamemap = GameMap::createmap(mapNumber);
 	addChild(gamemap);
@@ -71,17 +69,52 @@ void GameScene::enemyInit(int sceneNumber, int heroNumber, int map, int blood, i
 	hero->blueReduce = blueReduce;
 	hero->damage = damage;
 
+	if (sceneNumber % 2 == 0) {
+		boss = Boss::createboss(bossNumber / 2);
+		boss->setPosition(5000, 5000);
+		addChild(boss);
+		boss->addHero(hero);
+		scheduleOnce(schedule_selector(GameScene::bossAppear), 5.0f);
+	}
+
 	toolNumber = rand() % 3 + 1;
 	tool = Tool::createtool(toolNumber);
 	tool->setVisible(false);
 	tool->setPosition(0, 0);
 	addChild(tool);
 
+	//生成宠物
+	pet = Pet::create();
+	pet->setPosition(hero->getPosition().x + 100, hero->getPosition().y);
+	addChild(pet);
+	pet->setTag(100);
+	pet->addHero(hero);
+	pet->getBarreir(hero->barrier, 18);
+
 	//生成怪物，个数随即在4~6个
 	if (sceneNumber % 2 == 1) {
-		monster_number = CCRANDOM_0_1() * 2 + 4;
+
+		monster_number = 5;
+		pig_number = 3;
+		for (int k = 0; k < monster_number; k++)
+		{
+			monster[k] = 1;
+			monster_array[k] = Monster::create();
+			monster_array[k]->getBarreir(hero->barrier, 18);
+			monster_array[k]->setPosition(10000, 10000);
+			addChild(monster_array[k]);
+		}
+		for (int k = 0; k < pig_number; k++)
+		{
+			pig[k] = 1;
+			pig_array[k] = Pig::create();
+			pig_array[k]->getBarreir(hero->barrier, 18);
+			pig_array[k]->setPosition(10000, 10000);
+			addChild(pig_array[k]);
+		}
 		scheduleOnce(schedule_selector(GameScene::monsterAppear), 3.0f);
 	}
+
 	gamemap->addBarrier(this);
 
 	//以下乱七八糟的
@@ -257,7 +290,7 @@ bool GameScene::onContactBegin(PhysicsContact &contact)
 					bloodChange(1);
 				}
 				if (hero->blue < hero->BLUE) {
-					if (hero->blue + 2 < hero->BLUE) blueChange(2);
+					if (hero->blue + 5 < hero->BLUE) blueChange(5);
 					else blueChange(hero->BLUE - hero->blue);
 				}
 			}
@@ -275,6 +308,14 @@ bool GameScene::onContactBegin(PhysicsContact &contact)
 				scheduleOnce(schedule_selector(GameScene::nextScene), 5.0f);
 			}
 		}
+		else if ((NodeA->getTag() == 100 && NodeB->getTag() == 3) || (NodeB->getTag() == 100 && NodeA->getTag() == 3)) {
+			if (NodeA->getTag() == 3) {
+				NodeA->removeFromParentAndCleanup(true);
+			}
+			else {
+				NodeB->removeFromParentAndCleanup(true);
+			}
+		}
 		else if ((NodeA->getTag() == 0 && NodeB->getTag() == 13) || (NodeB->getTag() == 13 && NodeA->getTag() == 0)) {
 			if (NodeA->getTag() == 13) {
 				NodeA->removeFromParentAndCleanup(true);
@@ -283,6 +324,8 @@ bool GameScene::onContactBegin(PhysicsContact &contact)
 				NodeB->removeFromParentAndCleanup(true);
 			}
 			bloodChange(hero->BLOOD - hero->blood);
+			if (hero->blue + 20 <= hero->BLUE) blueChange(20);
+			else blueChange(hero->BLUE - hero->blue);
 		}
 		else if ((NodeA->getTag() == 0 && NodeB->getTag() == 14) || (NodeB->getTag() == 14 && NodeA->getTag() == 0)) {
 			if (NodeA->getTag() == 14) {
@@ -302,7 +345,8 @@ bool GameScene::onContactBegin(PhysicsContact &contact)
 			}
 			hero->damage++;
 			hero->blueReduce++;
-
+			if (hero->blue + 20 <= hero->BLUE) blueChange(20);
+			else blueChange(hero->BLUE - hero->blue);
 		}
 		if (!nextMap()) {
 			for (int i = 0; i < monster_number; i++) {
@@ -314,7 +358,7 @@ bool GameScene::onContactBegin(PhysicsContact &contact)
 							bloodChange(1);
 						}
 						if (hero->blue < hero->BLUE) {
-							if (hero->blue + 2 < hero->BLUE) blueChange(2);
+							if (hero->blue + 5 < hero->BLUE) blueChange(5);
 							else blueChange(hero->BLUE - hero->blue);
 						}
 					}
@@ -327,6 +371,51 @@ bool GameScene::onContactBegin(PhysicsContact &contact)
 						NodeB->removeFromParentAndCleanup(true);
 					}
 					monster_array[i]->bloodM -= hero->damage;
+				}
+			}
+			for (int i = 0; i < pig_number; i++)
+			{
+				if ((NodeA->getTag() == 0 && NodeB->getTag() == i + 30) || (NodeB->getTag() == 0 && NodeA->getTag() == i + 30))
+				{
+					if (hero->magicNumber < 3)
+					{
+						if (hero->shield > 0) {
+							if(hero->shield >= 2) shieldChange(-2);
+							else {
+								shieldChange(-1);
+								bloodChange(-1);
+							}
+							if (!recover) schedule(schedule_selector(GameScene::shieldRecover), 3.0f);
+							recover = true;
+						}
+						else bloodChange(-2);
+						if (hero->blood <= 0){
+							auto scene = NewOrExit::createScene(0);
+							Director::getInstance()->replaceScene(scene);
+						}   
+					}
+				}
+				if ((NodeA->getTag() == i + 30 && NodeB->getTag() == 2) || (NodeB->getTag() == i + 30 && NodeA->getTag() == 2))
+				{
+					if (hero->hemophagia) {
+						srand(time(0));
+						if (rand() % 5 == 1 && hero->blood < hero->BLOOD) {
+							bloodChange(1);
+						}
+						if (hero->blue < hero->BLUE) {
+							if (hero->blue + 5 < hero->BLUE) blueChange(5);
+							else blueChange(hero->BLUE - hero->blue);
+						}
+					}
+					if (NodeA->getTag() == 2)
+					{
+						NodeA->removeFromParentAndCleanup(true);
+					}
+					else
+					{
+						NodeB->removeFromParentAndCleanup(true);
+					}
+					pig_array[i]->bloodM -= hero->damage;
 				}
 			}
 		}
@@ -394,44 +483,55 @@ void GameScene::monsterAppear(float dt)
 {
 	for (int k = 0; k < monster_number; k++)
 	{
-		monster[k] = 1;
-		monster_array[k] = Monster::create();
-		monster_p_x = CCRANDOM_0_1() * 1800 + 100;
-		monster_p_y = CCRANDOM_0_1() * 800 + 200;
-		for (int n = 0; n < 10000; n++)
-		{
-			int num = 0;
-			for (int i = 0; i < 18; i++)
-			{
-				for (int j = 0; j < 34; j++)
-				{
-					if (barrier[17 - i][j] == 1)
-					{
-						if ((monster_p_x + monster_array[k]->getContentSize().width / 2) >(20 + 60 * j) || (monster_p_x - monster_array[k]->getContentSize().width / 2) < (50 + 60 * j) || (monster_p_y + monster_array[k]->getContentSize().height / 2) > (35 + 60 * i - 90) || (monster_p_y - monster_array[k]->getContentSize().height / 2) < (35 + 60 * i - 10))
-						{
-							num++;
-						}
-					}
-				}
-			}
-			if (num != 0)
-			{
-				monster_p_x = CCRANDOM_0_1() * 1800 + 100;
-				monster_p_y = CCRANDOM_0_1() * 800 + 200;
-			}
-			else
-				break;
-		}
 		monster_array[k]->setLocalZOrder(0);
 		monster_array[k]->setPosition(monster_p_x, monster_p_y);
-		addChild(monster_array[k]);
 		monster_array[k]->setTag(k + 4);
 		monster_array[k]->addHero(hero);
-		monster_array[k]->getBarreir(hero->barrier, 18);
 	}
+	for (int k = 0; k < pig_number; k++)
+	{
+		pig_array[k]->setLocalZOrder(0);
+		pig_array[k]->setPosition(monster_p_x, monster_p_y);
+		pig_array[k]->setTag(k + 30);
+		pig_array[k]->addHero(hero);
+
+	}
+	if (mapNumber == 1)
+	{
+		monster_array[0]->setPosition(360, 240);
+		monster_array[1]->setPosition(180, 480);
+		monster_array[2]->setPosition(1000, 470);
+		monster_array[3]->setPosition(360, 960);
+		monster_array[4]->setPosition(1500, 300);
+		pig_array[0]->setPosition(800, 480);
+		pig_array[1]->setPosition(1200, 480);
+		pig_array[2]->setPosition(1500, 640);
+	}
+	if (mapNumber == 3)
+	{
+		monster_array[0]->setPosition(240, 240);
+		monster_array[1]->setPosition(780, 900);
+		monster_array[2]->setPosition(1300, 300);
+		monster_array[3]->setPosition(360, 960);
+		monster_array[4]->setPosition(1500, 960);
+		pig_array[0]->setPosition(660, 240);
+		pig_array[1]->setPosition(1020, 890);
+		pig_array[2]->setPosition(1600, 300);
+	}
+	if (mapNumber == 5)
+	{
+		monster_array[0]->setPosition(660, 240);
+		monster_array[1]->setPosition(240, 240);
+		monster_array[2]->setPosition(420, 900);
+		monster_array[3]->setPosition(1700, 300);
+		monster_array[4]->setPosition(1500, 800);
+		pig_array[0]->setPosition(1000, 400);
+		pig_array[1]->setPosition(1560, 600);
+		pig_array[2]->setPosition(1080, 900);
+	}
+
 	schedule(schedule_selector(GameScene::MonsterBullet), 0.5f);
 	schedule(schedule_selector(GameScene::MonsterDie), 0.5f);
-
 }
 
 void GameScene::MonsterBullet(float dt)
@@ -441,8 +541,8 @@ void GameScene::MonsterBullet(float dt)
 		if (monster_array[i]->bloodM > 0)
 		{
 			monster_array[i]->distance = (monster_array[i]->getPosition().x - hero->getPosition().x)*
-			(monster_array[i]->getPosition().x - hero->getPosition().x) + (monster_array[i]->getPosition().y
-			- hero->getPosition().y)*(monster_array[i]->getPosition().y - hero->getPosition().y);
+				(monster_array[i]->getPosition().x - hero->getPosition().x) + (monster_array[i]->getPosition().y
+					- hero->getPosition().y)*(monster_array[i]->getPosition().y - hero->getPosition().y);
 			if (monster_array[i]->distance < 180000)
 			{
 				auto* bullet = Bullet::createbullet(monster_array[i]);
@@ -453,7 +553,7 @@ void GameScene::MonsterBullet(float dt)
 			}
 		}
 	}
-}  
+}
 
 void GameScene::MonsterDie(float dt)
 {
@@ -469,6 +569,18 @@ void GameScene::MonsterDie(float dt)
 			monster[i] = 0;
 		}
 	}
+	for (int i = 0; i < pig_number; i++)
+	{
+		if (pig_array[i]->bloodM <= 0 && pig_array[i]->getOpacity() != 0)
+		{
+			pig_array[i]->runAction(FadeOut::create(0.2f));
+		}
+		if (pig_array[i]->getOpacity() == 0)
+		{
+			pig_array[i]->setPosition(5000, 5000);
+			pig[i] = 0;
+		}
+	}
 	if (nextMap() && !next) {
 		tool->setVisible(true);
 		tool->setPosition(size.width / 2, size.height / 2);
@@ -480,15 +592,11 @@ void GameScene::MonsterDie(float dt)
 //添加boss
 void GameScene::addBoss(float x, float y)
 {
-	boss = Boss::createboss(bossNumber / 2);
 	boss->setPosition(x, y);
-	addChild(boss);
-	boss->addHero(hero);
 	schedule(schedule_selector(GameScene::BossBullet), 0.6f);
 	schedule(schedule_selector(GameScene::BossFlash), 8.0f);
 	schedule(schedule_selector(GameScene::BossDie), 0.2f);
 	boss->getBarreir(hero->barrier, 18);
-	boss->setGlobalZOrder(hero->getGlobalZOrder());
 }
 //boss延时出现
 void GameScene::bossAppear(float dt)
@@ -666,7 +774,6 @@ void GameScene::bTOg(float dt)
 {
 	cdBlue[4 - times]->setVisible(false);
 	cdGray[4 - times]->setVisible(true);
-	times++;
 	switch(hero->magicNumber) {
 		case 1:
 			if(hero->blood < hero->BLOOD) bloodChange(1);
@@ -680,8 +787,10 @@ void GameScene::bTOg(float dt)
 		default:
 			break;
 	}
+	times++;
 	if (times == 5) {
 		times = 0;
+		hero->magicNumber = 0;
 		unschedule(schedule_selector(GameScene::bTOg));
 	}
 }
@@ -707,6 +816,10 @@ void GameScene::bloodChange(int x)
 {
 	double scale = double(hero->blood + x) / hero->BLOOD;
 	hero->blood += x;
+	if (hero->blood < 0) {
+		scale = 0;
+		hero->blood = 0;
+	}
 	red->setScaleX(scale);
 	red->setPosition(40 + red->getContentSize().width * scale / 2, size.height - 11 - red->getContentSize().height / 2);
 	bloodNumber->setString(String::createWithFormat("%i", hero->blood)->getCString());
@@ -749,6 +862,10 @@ void GameScene::blueChange(int x)
 
 bool GameScene::nextMap()
 {
+	for (int i = 0; i < pig_number; i++)
+	{
+		if (pig[i] == 1)return false;
+	}
 	for (int i = 0;i < monster_number;i++) {
 		if(monster[i] == 1) return false;
 	}

@@ -7,6 +7,9 @@
 #include "Monster.h"
 #include "Boss.h"
 #include "Tool.h"
+#include "Pet.h"
+#include "Pig.h"
+
 
 class GameScene : public cocos2d::Scene
 {
@@ -14,11 +17,13 @@ private:
 	int monster_p_x;
 	int monster_p_y;
 	int barrier[18][34];
-	int monster[10] = { 0 };		
+	int monster[10] = { 0 };	
+	int pig[10] = { 0 };
 	int times = 0;
 	int sceneNumber;
 	int mapNumber;
 	int monster_number;
+	int pig_number;
 	int heroNumber;
 	int bossNumber;
 	int toolNumber;
@@ -31,7 +36,9 @@ private:
 	Size size;
 	Hero* hero;
 	Boss* boss;
+	Pet* pet;
 	Monster* monster_array[10];
+	Pig*pig_array[10];
 	Tool* tool;
 	Sprite* stateBoard;
 	Sprite* red;

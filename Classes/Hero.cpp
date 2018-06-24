@@ -68,7 +68,7 @@ void Hero::update(float dt)
 	else if (getPosition().x + getContentSize().width / 2 > 1990 && xMove == 1) {
 		xMove = 0;
 	}
-	else if (getPosition().y - getContentSize().height / 2 < 84 && yMove == -1) {
+	else if (getPosition().y - getContentSize().height / 2 < 90 && yMove == -1) {
 		yMove = 0;
 	}
 	else if (getPosition().y + getContentSize().height / 2 > 1070 && yMove == 1) {
@@ -195,7 +195,6 @@ void Hero::showTimeEnded()
 		hemophagia = false;
 	}
 	else if (heroNumber == 2) {
-		magicNumber = 0;
 		magic->removeFromParentAndCleanup(true);
 	}
 }
