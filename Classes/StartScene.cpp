@@ -1,5 +1,5 @@
 #include "StartScene.h"
-#include  "SelectMode.h"
+#include  "ShowMessage.h"
 #include  "SimpleAudioEngine.h"
 #include  <string>
 
@@ -60,10 +60,9 @@ bool StartScene::init()
 }
 
 void StartScene::menuStartCallback(Ref* pSender)
-{
-	//Director::getInstance()->end();
+{   
 	//跳入下一个场景
-	auto scene = SelectMode::createScene();
+	auto scene = ShowMessage::createScene();
 	Director::getInstance()->replaceScene(scene);
 }
 
