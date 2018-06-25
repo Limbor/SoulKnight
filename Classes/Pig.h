@@ -1,30 +1,27 @@
-#ifndef __MONSTER__H__
-#define __MONSTER__H__
+#pragma once
 
 #include "cocos2d.h"
 #include "Hero.h"
 
 USING_NS_CC;
-class Monster :public Sprite
+class Pig :public Sprite
 {
 public:
 	Hero * hero;
 	int bloodM;
-	int speed;
 	float distance;
 	int barrier[18][34];
 	virtual bool init();
 	void myupdate(float dt);
-	void update(float dt);
 	void addHero(Hero* hero);
 	void getBarreir(int a[][34], int length);
-	CREATE_FUNC(Monster);
-	void monsterRight();
-	void monsterLeft();
+	CREATE_FUNC(Pig);
+	void PigRight();
+	void PigLeft();
 private:
-	float xMove;
-	float yMove;
+	int xMove;
+	int yMove;
 
 };
 
-#endif // __MONSTER__H__
+
